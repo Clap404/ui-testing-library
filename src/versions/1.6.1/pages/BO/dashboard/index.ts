@@ -7,25 +7,24 @@ import {Dashboard as DashboardPageVersion} from '@versions/develop/pages/BO/dash
  * @extends DashboardPage
  */
 class BODashboardPage extends DashboardPageVersion implements DashboardPageInterface {
-  /**
-   * @constructs
-   * Setting up titles and selectors to use on dashboard page
-   */
-  constructor() {
-    super();
-    // Catalog
-    this.catalogParentLink = 'li#maintab-AdminCatalog';
-    this.productsLink = 'li#subtab-AdminProducts';
-    // Customers
-    this.customersParentLink = 'li#maintab-AdminParentCustomer';
-    // Localization
-    this.internationalParentLink = 'li#maintab-AdminParentLocalization';
-    this.localizationLink = 'li#subtab-AdminLocalization';
-    // Orders
-    this.ordersParentLink = 'li#maintab-AdminParentOrders';
-    // Shipping
-    this.shippingLink = '#maintab-AdminParentShipping';
-  }
+  // Catalog
+  public readonly catalogParentLink: string = 'li#maintab-AdminCatalog';
+
+  public readonly productsLink: string = 'li#subtab-AdminProducts';
+
+  // Customers
+  public readonly customersParentLink: string = 'li#maintab-AdminParentCustomer';
+
+  // Localization
+  public readonly internationalParentLink: string = 'li#maintab-AdminParentLocalization';
+
+  public readonly localizationLink: string = 'li#subtab-AdminLocalization';
+
+  // Orders
+  public readonly ordersParentLink: string = 'li#maintab-AdminParentOrders';
+
+  // Shipping
+  public readonly shippingLink: string = '#maintab-AdminParentShipping';
 }
 
 const boDashboardPage = new BODashboardPage();

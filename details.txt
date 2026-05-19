@@ -1,0 +1,36 @@
+## products — BO catalog products version chain + tabDescription
+
+Adds version-specific product create pages for PS 1.6.1 and 8.2, and
+wires up the tabDescription inheritance chain.
+
+### New files
+- `src/versions/8.2/pages/BO/catalog/products/create/index.ts` — Overrides
+  `setProductName` for the PS 8.2 multi-language product name input
+- `src/versions/8.2/pages/BO/catalog/products/create/tabDescription.ts` — Overrides
+  description tab selectors for PS 8.x (different CSS paths vs develop)
+- `src/versions/1.6.1/pages/BO/catalog/products/create/index.ts` — Overrides
+  `setProductName`, `setProductType`, and `setProduct` for legacy PS 1.6.x UI
+- `src/versions/1.6.1/pages/BO/catalog/products/index.ts` — Overrides `newProductButton`
+  selector for legacy navigation
+
+### Modified files
+- `src/versions/8.0/pages/BO/catalog/products/create/tabDescription.ts` — Now inherits
+  from 8.2 instead of develop (correct chain: 8.0 → 8.2 → develop).
+  Selector visibility changed to `protected` in 8.2 to allow this override.
+- `src/versions/develop/pages/BO/catalog/products/create/index.ts` — Minor adjustments
+
+### Modified proxy files
+- `src/pages/BO/catalog/products/create/index.ts` — Routes 1.6.1, develop
+- `src/pages/BO/catalog/products/create/tabDescription.ts` — Routes 1.6.1 (8.0), develop
+- `src/pages/BO/catalog/products/index.ts` — Routes 1.6.1, develop
+
+### Modified data
+- `src/data/demo/products.ts` — Demo product data adjustments
+
+### Inheritance chain
+1.6.1 → 1.7.2 → ... → develop  (products index)
+1.6.1 → develop  (products create — 1.7.2 is the next in chain)
+8.0 → 8.2 → develop  (tabDescription)
+
+### Suggested merge order
+No hard dependencies on other split PRs.

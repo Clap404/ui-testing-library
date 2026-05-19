@@ -249,15 +249,15 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   protected alertSuccessBlock: string;
 
-  protected alertDangerBlock: string;
+  private readonly alertDangerBlock: string;
 
-  protected alertInfoBlock: string;
+  private readonly alertInfoBlock: string;
 
   protected alertSuccessBlockParagraph: string;
 
   protected alertDangerBlockParagraph: string;
 
-  protected alertInfoBlockParagraph: string;
+  private readonly alertInfoBlockParagraph: string;
 
   private readonly confirmationModal: string;
 

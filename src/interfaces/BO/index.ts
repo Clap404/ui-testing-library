@@ -82,6 +82,7 @@ export interface BOBasePagePageInterface extends CommonPageInterface {
 
   addCurrentPageToQuickAccess(page: Page, pageName: string): Promise<string | null>;
   chooseShop(page: Page, shopNumber: number): Promise<void>;
+  clickOnBreadCrumbLink(page: Page, link: string): Promise<void>;
   clickOnMultiStoreHeader(page: Page): Promise<void>;
   clickOnNotification(page: Page, tabName: string, row?: number): Promise<void>;
   clickOnNotificationsLink(page: Page): Promise<boolean>;
@@ -105,6 +106,7 @@ export interface BOBasePagePageInterface extends CommonPageInterface {
   getShopColor(page: Page): Promise<string>;
   getShopName(page: Page): Promise<string>;
   getShopVersion(page:Page):Promise<string>;
+  getValueOnTinymceInput(page: Page, iFrameSelector: string, hasParagraph?: boolean): Promise<string>
   goToDashboardPage(page: Page): Promise<void>;
   goToManageQuickAccessPage(page: Page): Promise<void>;
   goToMyProfile(page: Page): Promise<void>;

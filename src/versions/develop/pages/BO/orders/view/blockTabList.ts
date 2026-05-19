@@ -1,6 +1,6 @@
 import type FakerOrderShipping from '@data/faker/orderShipping';
 import {ProductDocumentType, type ProductDocument} from '@data/types/product';
-import {type BOProductBlockTabListPageInterface} from '@interfaces/BO/orders/view/blockTabList';
+import {type BOOrdersViewBlockTabListPageInterface} from '@interfaces/BO/orders/view/blockTabList';
 import {type Frame, type Page} from '@playwright/test';
 import {ViewOrderBasePage} from '@versions/develop/pages/BO/orders/view/viewOrderBasePage';
 
@@ -9,7 +9,7 @@ import {ViewOrderBasePage} from '@versions/develop/pages/BO/orders/view/viewOrde
  * @class
  * @extends ViewOrderBasePage
  */
-class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBlockTabListPageInterface {
+class BOOrdersViewBlockTabListPage extends ViewOrderBasePage implements BOOrdersViewBlockTabListPageInterface {
   public readonly alertTextInSplitModal: string;
 
   public readonly alertTextInMergeModal: string;
@@ -144,13 +144,19 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
 
   private readonly splitShipmentCloseButton: string;
 
+  private readonly fulfillShipmentModal: string;
+
   private readonly editShipmentModal: string;
 
   private readonly editShipmentSubmitButton: string;
 
+  private readonly editShipmentTrackingNumberInput: string;
+
   private readonly editShipmentCarrierSelect: string;
 
-  private readonly editShipmentTrackingNumberInput: string;
+  private readonly fulfillShipmentTrackingNumberInput: string;
+
+  private readonly submitFulfillShipmentButton: string;
 
   private readonly merchandiseReturnsTableRow: (row: number) => string;
 
@@ -165,6 +171,8 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
   private readonly shipmentTableDropdownLink: (row: number) => string;
 
   private readonly shipmentMergeButton: (row: number) => string;
+
+  private readonly fulfillShipmentButton: (row: number) => string;
 
   private readonly editShipmentLink: (row: number) => string;
 
@@ -261,9 +269,11 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
     this.shipmentsTab = '#orderShipmentsTab';
     this.shipmentTableRow = (row: number) => `#shipment_grid_table tr:nth-child(${row})`;
     this.shipmentTableActionColumn = (row: number) => `${this.shipmentTableRow(row)} td.column-actions`;
-    this.shipmentTableDropdownLink = (row: number) => `${this.shipmentTableActionColumn(row)} div.dropdown`;
+    this.shipmentTableDropdownLink = (row: number) => `${this.shipmentTableActionColumn(row)} a.dropdown-toggle,`
+      + `${this.shipmentTableActionColumn(row)} div.dropdown`;
     this.shipmentMergeButton = (row: number) => `${this.shipmentTableActionColumn(row)} a[data-target="#mergeShipmentModal"]`;
-    this.editShipmentLink = (row: number) => `${this.shipmentTableActionColumn(row)} a.js-update-shipping-btn`;
+    this.fulfillShipmentButton = (row: number) => `${this.shipmentTableActionColumn(row)} a[data-target="#fulfillShipmentModal"]`;
+    this.editShipmentLink = (row: number) => `${this.shipmentTableActionColumn(row)} a[data-target="#editShipmentModal"]`;
     this.shipmentSplitButton = (row: number) => `${this.shipmentTableActionColumn(row)} a[data-show-modal="split-shipment"]`;
     this.splitShipmentModal = '#splitShipmentModal';
     this.splitShipmentProductCheckbox = (row: number) => `#split_shipment_products_${row}_selected`;
@@ -277,6 +287,7 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
     this.mergeShipmentProductCheckbox = (row: number) => `table.shipment-form__table tr:nth-child(${row})`
       + ' input[id*="merge_shipment_product"]';
     this.mergeShipmentCarrierSelect = '#merge_shipment_merge_to_shipment';
+    this.editShipmentTrackingNumberInput = '#edit_shipment_tracking_number';
     this.mergeShipmentSubmitButton = 'button[id*="submitMergeShipment"]';
     this.mergeShipmentModal = '#mergeShipmentModal';
     this.mergeShipmentWarningMessage = '#merge_shipment div.alert-warning p.alert-text';
@@ -286,7 +297,9 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
     this.editShipmentModal = '#editShipmentModal';
     this.editShipmentSubmitButton = '#submitEditShipment';
     this.editShipmentCarrierSelect = '#edit_shipment_carrier';
-    this.editShipmentTrackingNumberInput = '#edit_shipment_tracking_number';
+    this.fulfillShipmentModal = '#fulfillShipmentModal';
+    this.fulfillShipmentTrackingNumberInput = '#fulfill_shipment_tracking_number';
+    this.submitFulfillShipmentButton = '#submitFulfillShipment';
   }
 
   /*
@@ -497,7 +510,7 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
     return this.getAlertSuccessBlockParagraphContent(page);
   }
 
-  async getDocument(page: Page, nth: number = 1, filterType: ProductDocumentType|null = null): Promise<ProductDocument> {
+  async getDocument(page: Page, nth: number = 1, filterType: ProductDocumentType | null = null): Promise<ProductDocument> {
     const numberOfDocuments: number = await this.getNumberOfDocuments(page);
     const emptyDoc: ProductDocument = {
       date: '',
@@ -587,7 +600,7 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
    * @param rowChild {number} Document row on table
    * @returns {Promise<ProductDocumentType|null>}
    */
-  async getDocumentType(page: Page, rowChild: number = 1): Promise<ProductDocumentType|null> {
+  async getDocumentType(page: Page, rowChild: number = 1): Promise<ProductDocumentType | null> {
     await this.goToDocumentsTab(page);
 
     const document = await this.getDocument(page, rowChild);
@@ -595,7 +608,7 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
     return document.type;
   }
 
-  async countDocumentsType(page: Page): Promise<{creditSlips: number, deliverySlips: number, invoices: number}> {
+  async countDocumentsType(page: Page): Promise<{ creditSlips: number, deliverySlips: number, invoices: number }> {
     await this.goToDocumentsTab(page);
 
     const dataCount = {creditSlips: 0, deliverySlips: 0, invoices: 0};
@@ -993,6 +1006,18 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
   }
 
   /**
+   * Is merge link visible
+   * @param page {Page} Browser tab
+   * @param row {number} Row in the list
+   * @returns {Promise<boolean>}
+   */
+  async isMergeLinkVisible(page: Page, row: number = 1): Promise<boolean> {
+    await this.waitForSelectorAndClick(page, this.shipmentTableDropdownLink(row));
+
+    return this.elementVisible(page, this.shipmentMergeButton(row), 2000);
+  }
+
+  /**
    * Get shipment number
    * @param page {Page} Browser tab
    * @param row {number} Row in the list
@@ -1050,12 +1075,24 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
   /**
    * Edit shipment
    * @param page {Page} Browser tab
-   * @param trackingNumber {string} Tracking number to set in the input
    * @param carrier {string} Carrier name to set in the input
    * @returns {Promise<boolean>}
    */
   async editShipment(page: Page, trackingNumber: string, carrier: string): Promise<boolean> {
     await page.locator(this.editShipmentTrackingNumberInput).fill(trackingNumber);
+    await page.locator(this.editShipmentCarrierSelect).selectOption({label: carrier});
+    await page.locator(this.editShipmentSubmitButton).click();
+
+    return this.elementNotVisible(page, this.editShipmentModal, 2000);
+  }
+
+  /**
+   * Edit carrier
+   * @param page {Page} Browser tab
+   * @param carrier {string} Carrier name to set in the input
+   * @returns {Promise<boolean>}
+   */
+  async editCarrier(page: Page, carrier: string): Promise<boolean> {
     await page.locator(this.editShipmentCarrierSelect).selectOption({label: carrier});
     await page.locator(this.editShipmentSubmitButton).click();
 
@@ -1070,6 +1107,52 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
    */
   async getTrackingNumber(page: Page, row: number): Promise<string> {
     return this.getTextContent(page, this.shipmentTableTrackingNumber(row));
+  }
+
+  /**
+   * Click on fulfill shipment link
+   * @param page {Page} Browser tab
+   * @param row {number} Row of shipment from the table
+   * @returns {Promise<boolean>}
+   */
+  async clickOnFulfillLink(page: Page, row: number = 1): Promise<boolean> {
+    await page.locator(this.shipmentTableDropdownLink(row)).click();
+    await page.locator(this.fulfillShipmentButton(row)).click();
+
+    return this.elementVisible(page, this.fulfillShipmentModal, 2000);
+  }
+
+  /**
+   * Add tracking number
+   * @param page {Page} Browser tab
+   * @param trackingNumber {string} The tracking number to set in the input
+   * @returns {Promise<boolean>}
+   */
+  async addTrackingNumber(page: Page, trackingNumber: string): Promise<boolean> {
+    await page.locator(this.fulfillShipmentTrackingNumberInput).fill(trackingNumber);
+    await page.locator(this.submitFulfillShipmentButton).click();
+
+    return this.elementNotVisible(page, this.fulfillShipmentModal, 2000);
+  }
+
+  /**
+   * Is edit icon visible
+   * @param page {Page} Browser tab
+   * @param row {number} Row of shipment from the table
+   * @returns {Promise<boolean>}
+   */
+  async isEditIconVisible(page: Page, row: number = 1): Promise<boolean> {
+    return this.elementVisible(page, this.editShipmentLink(row), 2000);
+  }
+
+  /**
+   * Is dropdown actions button visible
+   * @param page {Page} Browser tab
+   * @param row {number} Row of shipment from the table
+   * @returns {Promise<boolean>}
+   */
+  async isDropdownActionsButtonVisible(page: Page, row: number = 1): Promise<boolean> {
+    return this.elementVisible(page, this.shipmentTableDropdownLink(row), 2000);
   }
 
   /**
@@ -1122,4 +1205,4 @@ class BOProductBlockTabListPage extends ViewOrderBasePage implements BOProductBl
   }
 }
 
-module.exports = new BOProductBlockTabListPage();
+module.exports = new BOOrdersViewBlockTabListPage();

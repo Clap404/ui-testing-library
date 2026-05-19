@@ -1,6 +1,6 @@
 import type FakerCountry from '@data/faker/country';
 import type FakerProduct from '@data/faker/product';
-import type DiscountCreator from '@data/types/discount';
+import type {DiscountCreator, DiscountType} from '@data/types/discount';
 
 import {faker} from '@faker-js/faker';
 
@@ -9,7 +9,7 @@ import {faker} from '@faker-js/faker';
  * @class
  */
 export default class FakerDiscount {
-  public readonly discountType: string | null;
+  public readonly discountType: DiscountType | null;
 
   public readonly name: string;
 
@@ -18,6 +18,8 @@ export default class FakerDiscount {
   public readonly dateFrom: string | null;
 
   public readonly dateTo: string | null;
+
+  public readonly neverExpires: boolean;
 
   public readonly allCustomers: boolean;
 
@@ -28,6 +30,8 @@ export default class FakerDiscount {
   public readonly noProductCondition: boolean;
 
   public readonly singleProduct: boolean;
+
+  public readonly specificProduct: FakerProduct | null;
 
   public readonly productSegment: boolean;
 
@@ -43,7 +47,7 @@ export default class FakerDiscount {
 
   public readonly minimumProductQuantity: boolean;
 
-  public readonly productQuantity: number;
+  public readonly productQuantity: number | string;
 
   public readonly discountValue: number | string;
 
@@ -57,9 +61,13 @@ export default class FakerDiscount {
 
   public readonly createAutomaticDiscount: boolean;
 
-  public readonly generateDiscountCode: boolean;
+  public readonly generateRandomCode: boolean;
 
   public readonly discountCode: string;
+
+  public readonly discountCompatibilityTypes: number[];
+
+  public readonly priority: number;
 
   public readonly freeGift: FakerProduct | null;
 
@@ -68,7 +76,7 @@ export default class FakerDiscount {
    * @param discountToCreate {Object} Could be used to force the value of some members
    */
   constructor(discountToCreate: DiscountCreator = {}) {
-    /** @type {string|null} Type of the discount */
+    /** @type {DiscountType|null} Type of the discount */
     this.discountType = discountToCreate.discountType || null;
 
     // Discount information
@@ -84,6 +92,9 @@ export default class FakerDiscount {
 
     /** @type {string|null} Ending date for the discount or null to disable it */
     this.dateTo = discountToCreate.dateTo || null;
+
+    /** @type {boolean} True if the discount never expires */
+    this.neverExpires = discountToCreate.neverExpires || false;
 
     // Customer eligibility
     /** @type {boolean} True to enable all customers on the discount */
@@ -101,6 +112,9 @@ export default class FakerDiscount {
 
     /** @type {boolean} True to enable single product on the discount */
     this.singleProduct = discountToCreate.singleProduct || false;
+
+    /**  /** @type {FakerProduct|null} The specific product to add on the discount */
+    this.specificProduct = discountToCreate.specificProduct || null;
 
     /** @type {boolean} True to enable product segment on the discount */
     this.productSegment = discountToCreate.productSegment || false;
@@ -126,7 +140,7 @@ export default class FakerDiscount {
     /** @type {boolean} True to enable minimum product quantity on the discount*/
     this.minimumProductQuantity = discountToCreate.minimumProductQuantity || false;
 
-    /** @type {number} Minimum product quantity of the discount*/
+    /** @type {number|string} Minimum product quantity of the discount*/
     this.productQuantity = discountToCreate.productQuantity || 1;
 
     // Discount value
@@ -148,11 +162,17 @@ export default class FakerDiscount {
     /** @type {FakerCountry[]} */
     this.deliveryConditionsCountries = discountToCreate.deliveryConditionsCountries || [];
 
-    /** @type {boolean} True to enable Generate discount code of the discount */
-    this.generateDiscountCode = discountToCreate.generateDiscountCode || false;
-
     /** @type {string} The code of the discount */
     this.discountCode = discountToCreate.discountCode || '';
+
+    /** @type {boolean} True to enable to generate random discount code */
+    this.generateRandomCode = discountToCreate.generateRandomCode || false;
+
+    /** @type {number[]} Compatible with discounts */
+    this.discountCompatibilityTypes = discountToCreate.discountCompatibilityTypes || [];
+
+    /** @type {number} Priority */
+    this.priority = discountToCreate.priority || 1;
 
     // Free gift
     /** @type {FakerProduct|null} The free gift to add on the discount */

@@ -1,0 +1,33 @@
+## addresses — BO customers addresses version chain
+
+Adds version-specific implementations for the customer addresses pages,
+covering PS 1.6.1 through PS 8.2.
+
+### New files
+- `src/versions/8.2/pages/BO/customers/addresses/create.ts` — Overrides `pageTitleCreate`
+  for the PS 8.x page title format
+- `src/versions/1.7.7/pages/BO/customers/addresses/create.ts` — Overrides `saveAddressButton`
+  selector (legacy card-footer button)
+- `src/versions/1.7.7/pages/BO/customers/addresses/index.ts` — Overrides `successfulCreationMessage`,
+  `pageTitle`, and `addNewAddressLink` for legacy PS
+- `src/versions/1.7.8/pages/BO/customers/addresses/index.ts` — Overrides `successfulCreationMessage`
+- `src/versions/1.6.1/pages/BO/customers/addresses/create.ts` — Full override of selectors and
+  `createEditAddress` method for the legacy PS 1.6.x form layout
+- `src/versions/1.6.1/pages/BO/customers/addresses/index.ts` — Overrides page title and link selectors
+
+### Modified develop files
+- `src/versions/develop/pages/BO/customers/addresses/create.ts` — Added keyboard Tab press after
+  email input (using `if ('keyboard' in page)` guard for safety)
+- `src/versions/develop/pages/BO/customers/addresses/index.ts` — Minor selector adjustments
+
+### Modified proxy files
+- `src/pages/BO/customers/addresses/create.ts` — Routes 1.6.1, 1.7.7, 8.2, develop
+- `src/pages/BO/customers/addresses/index.ts` — Routes 1.6.1, 1.7.7, 1.7.8, develop
+  (removed empty 8.2 passthrough)
+
+### Inheritance chain
+1.6.1 → 1.7.7 → 8.2 → develop  (create)
+1.6.1 → 1.7.7 → 1.7.8 → develop  (index)
+
+### Suggested merge order
+No hard dependencies on other split PRs.

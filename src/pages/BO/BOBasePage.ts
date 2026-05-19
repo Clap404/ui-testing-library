@@ -83,9 +83,13 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   private readonly navbarCollapsed: (isCollapsed: boolean) => string;
 
+  private readonly breadCrumb: string;
+
+  private readonly breadCrumbLink: (link: string) => string;
+
   private readonly dashboardLink: string;
 
-  public readonly ordersParentLink: string;
+  public ordersParentLink: string;
 
   public readonly ordersLink: string;
 
@@ -97,9 +101,9 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   public readonly shoppingCartsLink: string;
 
-  public readonly catalogParentLink: string;
+  public catalogParentLink: string;
 
-  public readonly productsLink: string;
+  public productsLink: string;
 
   public readonly categoriesLink: string;
 
@@ -115,7 +119,7 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   public readonly stocksLink: string;
 
-  public readonly customersParentLink: string;
+  public customersParentLink: string;
 
   public readonly customersLink: string;
 
@@ -155,11 +159,11 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   public readonly linkWidgetLink: string;
 
-  public readonly shippingLink: string;
+  public shippingLink: string;
 
-  public readonly carriersLink: string;
+  public carriersLink: string;
 
-  public readonly shippingPreferencesLink: string;
+  public shippingPreferencesLink: string;
 
   public readonly paymentParentLink: string;
 
@@ -167,11 +171,11 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   public readonly preferencesLink: string;
 
-  public readonly internationalParentLink: string;
+  public internationalParentLink: string;
 
   public readonly taxesLink: string;
 
-  public readonly localizationLink: string;
+  public localizationLink: string;
 
   public readonly locationsLink: string;
 
@@ -245,15 +249,15 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
   protected alertSuccessBlock: string;
 
-  private readonly alertDangerBlock: string;
+  protected alertDangerBlock: string;
 
-  private readonly alertInfoBlock: string;
+  protected alertInfoBlock: string;
 
   protected alertSuccessBlockParagraph: string;
 
   protected alertDangerBlockParagraph: string;
 
-  private readonly alertInfoBlockParagraph: string;
+  protected alertInfoBlockParagraph: string;
 
   private readonly confirmationModal: string;
 
@@ -360,6 +364,10 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
     this.viewMyStoreButton = `${this.multistoreHeader} div.header-multishop-right a.header-multishop-view-action`;
     this.multistoreTopBar = `${this.multistoreHeader} div.header-multishop-top-bar`;
     this.storeName = `${this.multistoreTopBar} div h2`;
+
+    // Breadcrumb link
+    this.breadCrumb = '.header-toolbar .breadcrumb';
+    this.breadCrumbLink = (link: string) => `${this.breadCrumb} a[href*="${link}"]`;
 
     // Dashboard (works if link is first level or sub tab)
     this.dashboardLink = '[id$=tab-AdminDashboard]';
@@ -745,6 +753,19 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
   }
 
   /**
+   * Click on bread crumb link
+   * @param page {Page} Browser tab
+   * @param link {string} Link to click on
+   * @returns {Promise<void>}
+   */
+  async clickOnBreadCrumbLink(page: Page, link: string): Promise<void> {
+    const currentUrl: string = page.url();
+
+    await page.locator(this.breadCrumbLink(link)).click();
+    await page.waitForURL((url: URL): boolean => url.toString() !== currentUrl);
+  }
+
+  /**
    * Open a subMenu if closed and click on a sublink
    * @param page {Page} Browser tab
    * @param parentSelector {string} Selector of the parent menu
@@ -756,15 +777,17 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
     if (semver.lt(shopVersion, '7.4.0')) {
       await page.hover(parentSelector);
-      await this.clickAndWaitForURL(page, linkSelector);
+      //await this.clickAndWaitForURL(page, linkSelector);
+      await page.locator(linkSelector).click();
+      await page.waitForLoadState('load');
     } else {
       if (parentSelector !== '') {
         await this.clickSubMenu(page, parentSelector);
         await this.scrollTo(page, linkSelector);
       }
-      await this.clickAndWaitForURL(page, linkSelector, 'load', 120000, {
-        timeout: 120000,
-      });
+      //await this.clickAndWaitForURL(page, linkSelector);
+      await page.locator(linkSelector).click();
+      await page.waitForLoadState('load');
       let linkActiveClass: string = '-active';
 
       // >= 1.7.8.0
@@ -789,7 +812,7 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
   async clickSubMenu(page: Page, parentSelector: string): Promise<void> {
     const openSelector = await this.isSidebarCollapsed(page) ? '.ul-open' : '.open';
 
-    if (await this.elementNotVisible(page, `${parentSelector}${openSelector}`, 5000)) {
+    if (await this.elementNotVisible(page, `${parentSelector}${openSelector}`, 1000)) {
       // open the block
       await this.scrollTo(page, parentSelector);
 
@@ -849,7 +872,7 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
 
       await this.waitForVisibleSelector(page, `${parentSelector}${openSelector}`);
     }
-    return this.elementVisible(page, linkSelector, 5000);
+    return this.elementVisible(page, linkSelector, 1000);
   }
 
   /**
@@ -1211,6 +1234,13 @@ export default class BOBasePage extends CommonPage implements BOBasePagePageInte
    * @return {Promise<string>}
    */
   async getAlertSuccessBlockParagraphContent(page: Frame | Page, timeout: number = 2000): Promise<string> {
+    const shopVersion = testContext.getPSVersion();
+
+    if (semver.lte(shopVersion, '7.0.0')) {
+      await this.elementVisible(page, this.alertSuccessBlock, timeout);
+      return this.getTextContent(page, this.alertSuccessBlock);
+    }
+
     await this.elementVisible(page, this.alertSuccessBlockParagraph, timeout);
     return this.getTextContent(page, this.alertSuccessBlockParagraph);
   }

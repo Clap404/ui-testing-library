@@ -1,0 +1,41 @@
+## compat — Base pages, dashboard, login, localization, utils for PS 1.6.1
+
+Adds PS 1.6.1 compatibility for dashboard, login, and localization pages,
+plus fixes to shared base infrastructure.
+
+### New files
+- `src/versions/1.6.1/pages/BO/dashboard/index.ts` — Overrides nav link selectors
+  (catalog, products, orders, shipping) for the legacy PS 1.6.x sidebar layout
+- `src/versions/1.6.1/pages/BO/login/index.ts` — Login page for PS 1.6.x
+- `src/versions/1.6.1/pages/BO/localization/localization/index.ts` — Localization page
+  overrides for PS 1.6.x (different path: localization/localization vs international/localization)
+- `src/versions/1.7.7/pages/BO/international/localization/index.ts` — Overrides
+  `importButton` selector for PS 1.7.7
+
+### Modified base files
+- `src/pages/BO/BOBasePage.ts` — Removed `readonly` from `ordersParentLink`,
+  `catalogParentLink`, `productsLink` (required so 1.6.1 subclasses can override
+  these in their constructors). Added `breadCrumb` and `breadCrumbLink` selectors.
+- `src/pages/commonPage.ts` — Fixed `dialogListener`: added `removeAllListeners`
+  before registering, and awaited dialog actions to prevent unhandled promise rejections.
+- `src/utils/test.ts` — Added `1.6.x → 6.x` version prefix normalisation
+  (mirrors the existing `1.7.x → 7.x` mapping)
+
+### Modified proxy files
+- `src/pages/BO/dashboard/index.ts` — Routes 1.6.1 and develop; fixed missing
+  `.boDashboardPage` on the develop fallback
+- `src/pages/BO/international/localization/index.ts` — Routes 1.6.1 and 1.7.7
+- `src/pages/BO/login/index.ts` — Restored 8.1 login for PS < 9.0.0
+
+### Modified develop files
+- `src/versions/develop/pages/BO/dashboard/index.ts` — Minor adjustments
+- `src/versions/develop/pages/BO/international/localization/index.ts` — Selector and
+  method improvements for import localization pack
+
+### Other
+- `.gitignore` — Added `/.idea/` (JetBrains IDE)
+
+### Suggested merge order
+Merge this PR **before** the dashboard-related ones if any other PR also
+modifies BOBasePage or 1.6.1 dashboard. The `readonly` removal in BOBasePage
+is a prerequisite for the 1.6.1 dashboard overrides.

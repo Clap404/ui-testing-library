@@ -96,7 +96,7 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
     await this.setValue(page, this.speedGradeInput, carrierData.speedGrade);
     await this.uploadFile(page, this.logoInput, `${carrierData.name}.jpg`);
     await this.setValue(page, this.trackingURLInput, carrierData.trackingURL);
-    await page.locator(this.nextButton).click();
+    await page.locator(this.nextButton).click({force: true});
 
     // Set shipping locations and costs
     //await page.locator(this.freeShippingToggle(carrierData.freeShipping ? 'on' : 'off')).setChecked(true, {timeout: 2000});
@@ -184,7 +184,7 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
         }
       }
     }
-    await page.locator(this.nextButton).click();
+    await page.locator(this.nextButton).click({force: true});
 
     // Set size, weight and group access
     await this.setValue(page, this.maxWidthInput, carrierData.maxWidth);
@@ -205,7 +205,7 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
       }
     }
 
-    await page.locator(this.nextButton).click();
+    await page.locator(this.nextButton).click({force: true});
 
     // Summary
     await page.locator(this.enableToggle(carrierData.enable ? 'on' : 'off')).setChecked(true, {timeout: 1500});
@@ -222,7 +222,7 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
    * @returns {Promise<string>}
    */
   async setHandlingCosts(page: Page, toEnable: boolean = true): Promise<string> {
-    await page.locator(this.nextButton).click();
+    await page.locator(this.nextButton).click({force: true});
     await this.setChecked(page, this.addHandlingCostsToggle(toEnable ? 'on' : 'off'));
 
     await page.locator(this.finishButton).click();

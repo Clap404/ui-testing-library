@@ -1,13 +1,21 @@
-import type FakerGroup from '@data/faker/group';
 import TaxRules from '@data/demo/taxRule';
+import type FakerGroup from '@data/faker/group';
 import FakerTaxRule from '@data/faker/taxRule';
-import {CarrierCreator, CarrierRange} from '@data/types/carrier';
+import { CarrierCreator, CarrierRange } from '@data/types/carrier';
 
-import {faker} from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
-const taxes: string[] = Object.values(TaxRules).map((tax: FakerTaxRule) => tax.name);
-const outOfRangeBehavior: string[] = ['Apply the cost of the highest defined range', 'Disable carrier'];
-const billing: string[] = ['According to total price', 'According to total weight'];
+const taxes: string[] = Object.values(TaxRules).map(
+  (tax: FakerTaxRule) => tax.name,
+);
+const outOfRangeBehavior: string[] = [
+  'Apply the cost of the highest defined range',
+  'Disable carrier',
+];
+const billing: string[] = [
+  'According to total price',
+  'According to total weight',
+];
 
 /**
  * Create new carrier to use in carrier form on BO
@@ -18,9 +26,9 @@ export default class FakerCarrier {
 
   public readonly position: number;
 
-  public name: string;
+  public readonly name: string;
 
-  public transitName: string;
+  public readonly transitName: string;
 
   public readonly speedGrade: number;
 
@@ -74,40 +82,56 @@ export default class FakerCarrier {
     this.transitName = carrierToCreate.transitName || faker.company.name();
 
     /** @type {number} Shipping delay, 0 for longest and 9 for shortest */
-    this.speedGrade = carrierToCreate.speedGrade || faker.number.int({min: 1, max: 9});
+    this.speedGrade =
+      carrierToCreate.speedGrade || faker.number.int({ min: 1, max: 9 });
 
     /** @type {string} Url of carrier tracking */
-    this.trackingURL = carrierToCreate.trackingURL || 'https://example.com/track.php?num=20';
+    this.trackingURL =
+      carrierToCreate.trackingURL || 'https://example.com/track.php?num=20';
 
     /** @type {boolean} True to include handling costs on the price */
-    this.handlingCosts = carrierToCreate.handlingCosts === undefined ? true : carrierToCreate.handlingCosts;
+    this.handlingCosts =
+      carrierToCreate.handlingCosts === undefined
+        ? true
+        : carrierToCreate.handlingCosts;
 
     /** @type {boolean} True to make shipping free */
-    this.freeShipping = carrierToCreate.freeShipping === undefined ? true : carrierToCreate.freeShipping;
+    this.freeShipping =
+      carrierToCreate.freeShipping === undefined
+        ? true
+        : carrierToCreate.freeShipping;
 
     /** @type {string} Billing method of the carrier */
-    this.billing = carrierToCreate.billing || faker.helpers.arrayElement(billing);
+    this.billing =
+      carrierToCreate.billing || faker.helpers.arrayElement(billing);
 
     /** @type {string} Tax rule of the carrier */
     this.taxRule = carrierToCreate.taxRule || faker.helpers.arrayElement(taxes);
 
     /** @type {string} Behavior when no defined range matches the customer carts */
-    this.outOfRangeBehavior = carrierToCreate.outOfRangeBehavior || faker.helpers.arrayElement(outOfRangeBehavior);
+    this.outOfRangeBehavior =
+      carrierToCreate.outOfRangeBehavior ||
+      faker.helpers.arrayElement(outOfRangeBehavior);
 
     /** @type {number} Max width that the carrier can handle */
-    this.maxWidth = carrierToCreate.maxWidth || faker.number.int({min: 1, max: 100});
+    this.maxWidth =
+      carrierToCreate.maxWidth || faker.number.int({ min: 1, max: 100 });
 
     /** @type {number} Max height that the carrier can handle */
-    this.maxHeight = carrierToCreate.maxHeight || faker.number.int({min: 1, max: 100});
+    this.maxHeight =
+      carrierToCreate.maxHeight || faker.number.int({ min: 1, max: 100 });
 
     /** @type {number} Max depth that the carrier can handle */
-    this.maxDepth = carrierToCreate.maxDepth || faker.number.int({min: 1, max: 100});
+    this.maxDepth =
+      carrierToCreate.maxDepth || faker.number.int({ min: 1, max: 100 });
 
     /** @type {number} Max weight that the carrier can handle */
-    this.maxWeight = carrierToCreate.maxWeight || faker.number.int({min: 1, max: 100});
+    this.maxWeight =
+      carrierToCreate.maxWeight || faker.number.int({ min: 1, max: 100 });
 
     /** @type {boolean} Status of the carrier */
-    this.enable = carrierToCreate.enable === undefined ? true : carrierToCreate.enable;
+    this.enable =
+      carrierToCreate.enable === undefined ? true : carrierToCreate.enable;
 
     /** @type {number} Price HT */
     this.price = carrierToCreate.price || 0;

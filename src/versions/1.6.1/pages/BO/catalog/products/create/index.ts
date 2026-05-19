@@ -1,15 +1,18 @@
 // Import pages
-import type {BOProductsCreatePageInterface} from '@interfaces/BO/catalog/products/create';
-import {BOProductsCreatePage} from '@versions/develop/pages/BO/catalog/products/create';
 import type FakerProduct from '@data/faker/product';
-import type {Page} from 'playwright';
+import type { BOProductsCreatePageInterface } from '@interfaces/BO/catalog/products/create';
+import { BOProductsCreatePage } from '@versions/1.7.2/pages/BO/catalog/products/create';
+import type { Page } from 'playwright';
 
 /**
  * Bo create product page, contains functions that can be used on the page
  * @class
  * @extends BOProductsCreatePage
  */
-class BOProductsCreatePageVersion extends BOProductsCreatePage implements BOProductsCreatePageInterface {
+class BOProductsCreatePageVersion
+  extends BOProductsCreatePage
+  implements BOProductsCreatePageInterface
+{
   /**
    * Set product name
    * @param page {Page} Browser tab
@@ -17,12 +20,22 @@ class BOProductsCreatePageVersion extends BOProductsCreatePage implements BOProd
    * @param locale {string} Locale
    * @returns {Promise<void>}
    */
-  async setProductName(page: Page, name: string, locale: string = 'en'): Promise<void> {
-    const isShopMultiLanguages = await page.locator(this.productNameLanguageButton).isVisible({timeout: 1200});
+  async setProductName(
+    page: Page,
+    name: string,
+    locale: string = 'en',
+  ): Promise<void> {
+    const isShopMultiLanguages = await page
+      .locator(this.productNameLanguageButton)
+      .isVisible({ timeout: 1200 });
 
     if (isShopMultiLanguages) {
-      await page.locator(this.productNameLanguageButton).click({timeout: 1000});
-      await page.locator(this.productNameLanguageDropdownItem(locale)).click({timeout: 1000});
+      await page
+        .locator(this.productNameLanguageButton)
+        .click({ timeout: 1000 });
+      await page
+        .locator(this.productNameLanguageDropdownItem(locale))
+        .click({ timeout: 1000 });
     }
 
     await this.setValue(page, this.productNameInput(locale), name);
@@ -46,7 +59,10 @@ class BOProductsCreatePageVersion extends BOProductsCreatePage implements BOProd
    * @param productData {FakerProduct} Data to set in new product page
    * @returns {Promise<string>}
    */
-  async setProduct(page: Page, productData: FakerProduct): Promise<string | null> /**/ {
+  async setProduct(
+    page: Page,
+    productData: FakerProduct,
+  ): Promise<string | null> /**/ {
     // INFORMATION TAB
     // product type
     await this.setProductType(page, productData);
@@ -84,4 +100,7 @@ class BOProductsCreatePageVersion extends BOProductsCreatePage implements BOProd
 }
 
 const boProductsCreatePage = new BOProductsCreatePageVersion();
-export {boProductsCreatePage, BOProductsCreatePageVersion as BOProductsCreatePage};
+export {
+  boProductsCreatePage,
+  BOProductsCreatePageVersion as BOProductsCreatePage,
+};

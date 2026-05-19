@@ -1,0 +1,30 @@
+## orders — BO orders create/index version chain
+
+Adds version-specific implementations for the orders create page,
+covering PS 1.6.1 through 1.7.8, and fixes the develop create page.
+
+### New files
+- `src/versions/1.7.7/pages/BO/orders/create.ts` — Overrides `createOrder` and
+  `setPaymentMethod` for the PS 1.7.7 UI
+- `src/versions/1.7.8/pages/BO/orders/create.ts` — Overrides `paymentMethodSelect`
+  selector for the PS 1.7.8 summary block
+- `src/versions/1.6.1/pages/BO/orders/create.ts` — Full override of customer search
+  selectors and checkout history block locators for the legacy PS 1.6.x UI
+- `src/versions/1.6.1/pages/BO/orders/index.ts` — Overrides `newOrderPageLink` and
+  `ordersParentLink` for legacy navigation
+
+### Modified develop files
+- `src/versions/develop/pages/BO/orders/create.ts` — Restored `waitForResponse` call
+  after adding a product to cart (was incorrectly commented out)
+- `src/versions/develop/pages/BO/orders/index.ts` — Minor adjustments
+
+### Modified proxy files
+- `src/pages/BO/orders/create.ts` — Routes 1.6.1, 1.7.7, 1.7.8, develop
+  (removed empty 8.x passthroughs; fixed missing .boOrderCreatePage on fallback)
+- `src/pages/BO/orders/index.ts` — Routes 1.6.1, develop
+
+### Inheritance chain
+1.6.1 → 1.7.7 → 1.7.8 → develop
+
+### Suggested merge order
+No hard dependencies on other split PRs.

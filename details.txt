@@ -1,0 +1,19 @@
+## discountsV2 — New BO catalog page
+
+Adds a new `discountsV2` page to support the event bus version of the discounts feature.
+
+### New files
+- `src/data/faker/discount.ts` — Faker data for discount entities
+- `src/data/types/discount.ts` — TypeScript types for discount data
+- `src/interfaces/BO/catalog/discountsV2/create.ts` — Interface for the create discount page
+- `src/interfaces/BO/catalog/discountsV2/index.ts` — Interface for the discounts list page
+- `src/versions/develop/pages/BO/catalog/discountsV2/create.ts` — Page implementation (create/edit)
+- `src/versions/develop/pages/BO/catalog/discountsV2/index.ts` — Page implementation (list)
+- `src/pages/BO/catalog/discountsV2/index.ts` — Version-dispatching proxy
+
+### Modified files
+- `src/interfaces/BO/index.ts` — Exports the new discountsV2 interfaces
+
+### Notes
+- The develop page uses named exports (not module.exports)
+- Only a develop version exists; no version-specific overrides needed yet

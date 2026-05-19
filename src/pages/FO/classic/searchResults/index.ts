@@ -1,8 +1,15 @@
 import type {FoSearchResultsPageInterface} from '@interfaces/FO/searchResults';
+import testContext from '@utils/test';
+import semver from 'semver';
+
+const psVersion = testContext.getPSVersion();
 
 /* eslint-disable global-require, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
 function requirePage(): FoSearchResultsPageInterface {
-  return require('@versions/develop/pages/FO/classic/searchResults').searchResultsPage;
+  if (semver.lt(psVersion, '8.3.0')) {
+    return require('@versions/8.2/pages/FO/classic/searchResults').foSearchResultsPage;
+  }
+  return require('@versions/develop/pages/FO/classic/searchResults').foSearchResultsPage;
 }
 /* eslint-enable global-require, @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires */
 

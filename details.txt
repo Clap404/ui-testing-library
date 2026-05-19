@@ -1,0 +1,25 @@
+## fo-pages — FO classic pages updates
+
+Updates and adds FO classic pages: search results for PS 8.2, cart/checkout
+improvements, and a minor fix to the home page.
+
+### New files
+- `src/versions/8.2/pages/FO/classic/searchResults/index.ts` — Search results page
+  variant for PS 8.x. Exported as `foSearchResultsPage` / `FOSearchResultsPage`.
+- `src/versions/8.1/pages/FO/classic/home/index.ts` — Home page variant for PS 8.1
+
+### Modified develop files
+- `src/versions/develop/pages/FO/classic/cart/index.ts` — Cart page updates
+- `src/versions/develop/pages/FO/classic/checkout/index.ts` — Checkout page updates
+- `src/versions/develop/pages/FO/classic/home/index.ts` — Removed stale commented-out
+  `clickAndWaitForURL` call in `goToProductPage`
+
+### Modified proxy files
+- `src/pages/FO/classic/searchResults/index.ts` — Routes PS < 8.3 to the 8.2 version,
+  newer to develop. Uses `foSearchResultsPage` export name.
+
+### New interfaces
+- `src/interfaces/FO/cart/index.ts` — Cart page interface
+
+### Suggested merge order
+No hard dependencies on other split PRs.

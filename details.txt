@@ -1,0 +1,28 @@
+## carriers — BO shipping carriers page for PS 8.2 + version chain
+
+Adds the carriers list and create/edit pages for PS 8.2, and wires up the
+version chain so older PS versions get the correct implementation.
+
+### New files
+- `src/versions/8.2/pages/BO/shipping/carriers/create.ts` — Full create/edit carrier
+  form implementation for the legacy wizard UI (PS < 9). Selectors and methods
+  use class properties throughout (no inline strings in method bodies).
+- `src/versions/8.2/pages/BO/shipping/carriers/index.ts` — Carriers list page for PS 8.x
+
+### New version-chain files (inherit from nearest newer version)
+- `src/versions/1.6.1/pages/BO/shipping/carriers/create.ts` — Inherits 8.2, no overrides needed
+- `src/versions/1.6.1/pages/BO/shipping/carriers/index.ts` — Overrides `goToAddNewCarrierPage`
+  (legacy PS uses a configuration form step instead of a direct link)
+- `src/versions/1.7.8/pages/BO/shipping/carriers/index.ts` — Overrides `addNewCarrierLink` selector
+- `src/versions/8.0/pages/BO/shipping/carriers/index.ts` — Pass-through to 8.1
+- `src/versions/8.1/pages/BO/shipping/carriers/index.ts` — Pass-through to 8.2
+
+### Modified proxy files
+- `src/pages/BO/shipping/carriers/create.ts` — Routes versions to the correct implementation
+- `src/pages/BO/shipping/carriers/index.ts` — Routes versions (removed dead 1.7.7 branch)
+
+### Modified data
+- `src/data/faker/carrier.ts` — No functional change (readonly preserved)
+
+### Suggested merge order
+No hard dependencies on other split PRs. Can be merged independently.

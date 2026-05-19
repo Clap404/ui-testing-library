@@ -99,9 +99,18 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
     await page.locator(this.nextButton).click();
 
     // Set shipping locations and costs
-    await this.setChecked(page, this.freeShippingToggle(carrierData.freeShipping ? 'on' : 'off'));
+    //await page.locator(this.freeShippingToggle(carrierData.freeShipping ? 'on' : 'off')).setChecked(true, {timeout: 2000});
+    if (carrierData.freeShipping) {
+      await page.locator(this.freeShippingToggle('on')).click({force: true, timeout: 1500});
+    }
     if (!carrierData.freeShipping) {
-      await this.setChecked(page, this.addHandlingCostsToggle(carrierData.handlingCosts ? 'on' : 'off'));
+      await page.locator(this.freeShippingToggle('off')).click({force: true, timeout: 1500});
+    }
+    if (carrierData.handlingCosts) {
+      await page.locator(this.addHandlingCostsToggle('on')).click({force: true, timeout: 1500});
+    }
+    if (!carrierData.handlingCosts) {
+      await page.locator(this.addHandlingCostsToggle('off')).click({force: true, timeout: 1500});
     }
 
     if (carrierData.billing === 'According to total price') {
@@ -198,7 +207,7 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
     await page.locator(this.nextButton).click();
 
     // Summary
-    await this.setChecked(page, this.enableToggle(carrierData.enable ? 'on' : 'off'));
+    await page.locator(this.enableToggle(carrierData.enable ? 'on' : 'off')).setChecked(true, {timeout: 1500});
     await page.locator(this.finishButton).click();
 
     // Return successful message
@@ -222,4 +231,5 @@ class BOCarriersCreatePage extends BOCarriersCreatePageVersion implements BOCarr
   }
 }
 
-module.exports = new BOCarriersCreatePage();
+const boCarriersCreatePage = new BOCarriersCreatePage();
+export {boCarriersCreatePage, BOCarriersCreatePage};
